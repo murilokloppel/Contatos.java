@@ -6,58 +6,53 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*; 
 
-import com.finalproject.contatos.dtos.ContatosResponse;
-import com.finalproject.contatos.entities.Contatos;
-import com.finalproject.contatos.services.ContatosService;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
+import com.finalproject.contatos.dtos.ContatosRequest;  
+import com.finalproject.contatos.dtos.ContatosResponse; 
+import com.finalproject.contatos.services.ContatosService; 
 
 
 @RestController
-@RequestMapping("contatos")
+@RequestMapping("/api/contatos")
+@CrossOrigin(origins = "http://localhost:4200") 
 public class ContatosController {
 
     @Autowired
     private ContatosService service;
 
-    @GetMapping
-    public String getMethodName(@RequestParam String param) {
-        return new String();
-    }
     
-    public ResponseEntity<List<ContatosResponse>> getContatos() {
+    @GetMapping
+    public ResponseEntity<List<ContatosResponse>> getAllContatos() {
         return ResponseEntity.ok(service.getAllContatos());
     }
+
+    
     @GetMapping("{id}")
-    public ResponseEntity<ContatosResponse> getContatos(@PathVariable long id){
+    public ResponseEntity<ContatosResponse> getContatosById(@PathVariable long id){
         return ResponseEntity.ok(service.getContatosById(id));
     }
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteContatos(@PathVariable long id){
-        service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-    @PutMapping("path")
-    public ResponseEntity<ContatosResponse> saveContatos(@Validated @RequestBody Contatos contatos) {
-        ContatosResponse newContato = service.save(contatos);
-        URI location = URI.create("/contatos/" + newContato.id());
-        return ResponseEntity.created(location).body(newContato);
+
     
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteContato(@PathVariable long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build(); 
     }
-    @PostMapping("{id}")
-    public ResponseEntity<Void> updateContatos(@PathVariable long id,
-                                               @Validated @RequestBody ContatosResponse contatos) {
-        service.update(contatos, id); 
-        return ResponseEntity.ok().build();
-    }      
+
+    // 
+    @PostMapping
+    public ResponseEntity<ContatosResponse> createContato(@Validated @RequestBody ContatosRequest contatosRequest) {
+        ContatosResponse newContato = service.save(contatosRequest);
+        URI location = URI.create("/api/contatos/" + newContato.id()); 
+        return ResponseEntity.created(location).body(newContato); 
+    }
+
+    
+    @PutMapping("{id}")
+    public ResponseEntity<Void> updateContato(@PathVariable long id,
+                                              @Validated @RequestBody ContatosRequest contatosRequest) {
+        service.update(contatosRequest, id);
+        return ResponseEntity.ok().build(); //  
+    }
 }

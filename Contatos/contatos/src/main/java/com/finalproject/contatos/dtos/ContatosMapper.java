@@ -1,11 +1,14 @@
 package com.finalproject.contatos.dtos;
 
+import org.springframework.stereotype.Component;
+
 import com.finalproject.contatos.entities.Contatos;
 
+@Component
 public class ContatosMapper {
-    public static ContatosResponse toDTO(Contatos contatos) {
+    public ContatosResponse toDTO(Contatos contatos) {
         return new ContatosResponse(
-            null, // ID will be set by the database
+            contatos.getId(), 
             contatos.getNome(),
             contatos.getEmail(),
             contatos.getTelefone(),
@@ -18,7 +21,7 @@ public class ContatosMapper {
             contatos.getObservacao()
         );
     }
-    public static Contatos toEntity(ContatosRequest request) {        
+    public Contatos toEntity(ContatosRequest request) {        
             Contatos contatos = new Contatos();            
             contatos.setNome(request.nome()); 
             contatos.setEmail(request.email());
